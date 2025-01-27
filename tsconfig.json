@@ -1,6 +1,8 @@
 {
     "compilerOptions": {
       "moduleDetection": "force", 
-      "target": "ES2015"
+      "allowSyntheticDefaultImports": true,
+      "esModuleInterop": true,
+      "types": ["vitest/globals"]
     }
   }  

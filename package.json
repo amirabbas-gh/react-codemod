@@ -11,6 +11,8 @@
     "jscodeshift": "jscodeshift"
   },
   "dependencies": {
+    "@codemod.com/codemod-utils": "^1.0.0",
+    "@types/jscodeshift": "^0.12.0",
     "chalk": "^2.4.2",
     "eslint": "^6.6.0",
     "execa": "^3.2.0",

@@ -1,7 +1,3 @@
 export default {
-    presets: [
-      "@babel/preset-env",
-      "@babel/preset-typescript"
-    ]
-  }
-    
+  presets: ["@babel/preset-env", "@babel/preset-typescript"],
+};

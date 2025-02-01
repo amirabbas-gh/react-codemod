@@ -23,7 +23,7 @@ Changes to the original file: changed tests structure
 
 import * as assert from "assert";
 import transform from "../prop-types-typescript.codemod";
-import jscodeshift from 'jscodeshift';
+import * as jscodeshift from 'jscodeshift';
 import type { API } from 'jscodeshift';
 
 const buildApi = (parser: string | undefined): API => ({

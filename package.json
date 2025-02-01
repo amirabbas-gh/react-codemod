@@ -24,7 +24,10 @@
   },
   "jest": {
     "globals": {
-      "baseDir": "../"
+      "baseDir": "../",
+      "ts-jest": {
+        "tsconfig": "./tsconfig.codemod.json"
+      }
     },
     "testEnvironment": "node",
     "roots": [

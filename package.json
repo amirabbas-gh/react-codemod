@@ -24,10 +24,7 @@
   },
   "jest": {
     "globals": {
-      "baseDir": "../",
-      "ts-jest": {
-        "tsconfig": "./tsconfig.codemod.json"
-      }
+      "baseDir": "../"
     },
     "testEnvironment": "node",
     "roots": [
@@ -41,8 +38,18 @@
     "transformIgnorePatterns": [
       "/node_modules/(?!@codemod\\.com/codemod-utils)/.+\\.js$"
     ],
-    "moduleFileExtensions": ["js", "ts", "tsx", "jsx"],
-    "extensionsToTreatAsEsm": [".ts", ".tsx", ".js", ".jsx"]
+    "moduleFileExtensions": [
+      "js",
+      "ts",
+      "tsx",
+      "jsx"
+    ],
+    "extensionsToTreatAsEsm": [
+      ".ts",
+      ".tsx",
+      ".js",
+      ".jsx"
+    ]
   },
   "devDependencies": {
     "@babel/core": "^7.6.4",

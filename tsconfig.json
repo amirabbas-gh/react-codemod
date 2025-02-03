@@ -5,7 +5,5 @@
     "module": "NodeNext",
     "moduleResolution": "NodeNext"
   },
-  "references": [
-    { "path": "./tsconfig.codemod.json" }
-  ]
-}  
+  "references": [{ "path": "./tsconfig.codemod.json" }]
+}

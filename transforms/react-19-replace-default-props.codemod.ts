@@ -7,6 +7,7 @@ import type {
   MemberExpression,
   ObjectProperty,
   Property,
+  VariableDeclaration,
 } from "jscodeshift";
 
 import {
@@ -42,7 +43,6 @@ const buildPropertyWithDefaultValue = (
   property: ObjectProperty | Property,
   defaultValue: any
 ) => {
-  // Special handling for nested destructuring patterns
   if (property.value.type === "ObjectPattern") {
     return j.assignmentPattern(property.value, defaultValue);
   }
@@ -84,13 +84,30 @@ export default function transform(
     }
 
     const defaultPropsMap = new Map();
+    const defaultPropsConstants: VariableDeclaration[] = [];
 
     defaultPropsRight.properties?.forEach((property) => {
       if (
         (j.Property.check(property) || j.ObjectProperty.check(property)) &&
         j.Identifier.check(property.key)
       ) {
-        defaultPropsMap.set(property.key.name, property.value);
+        if(property.value.type === "ObjectExpression" || property.value.type === "ArrayExpression" || property.value.type === "ArrowFunctionExpression") {
+          const constName = `${componentName[0]?.toLowerCase()}${componentName.slice(1)}DefaultProp${property.key.name[0]?.toUpperCase() + property.key.name.slice(1)}`;
+          const constNamePath = root.find(j.Identifier, {
+            name: constName,
+          }).paths();
+          if(constNamePath.length) {
+            return defaultPropsMap.set(property.key.name, property.value);
+          }
+          defaultPropsConstants.push(
+            j.variableDeclaration("const", [
+              j.variableDeclarator(j.identifier(constName), property.value)
+            ])
+          );
+          defaultPropsMap.set(property.key.name, j.identifier(constName));
+        } else {
+          defaultPropsMap.set(property.key.name, property.value);
+        }
       }
     });
 
@@ -112,6 +129,12 @@ export default function transform(
           }
         }
       });
+    }
+
+    if(defaultPropsConstants.length && path.parent) {
+      for(let defaultPropsConstant of defaultPropsConstants) {
+        path.parent.parent.insertBefore(defaultPropsConstant);
+      }
     }
 
     j(defaultProps).closest(j.ExpressionStatement).remove();

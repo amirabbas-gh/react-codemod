@@ -91,17 +91,27 @@ export default function transform(
         (j.Property.check(property) || j.ObjectProperty.check(property)) &&
         j.Identifier.check(property.key)
       ) {
-        if(property.value.type === "ObjectExpression" || property.value.type === "ArrayExpression" || property.value.type === "ArrowFunctionExpression") {
-          const constName = `${componentName[0]?.toLowerCase()}${componentName.slice(1)}DefaultProp${property.key.name[0]?.toUpperCase() + property.key.name.slice(1)}`;
-          const constNamePath = root.find(j.Identifier, {
-            name: constName,
-          }).paths();
-          if(constNamePath.length) {
+        if (
+          property.value.type === "ObjectExpression" ||
+          property.value.type === "ArrayExpression" ||
+          property.value.type === "ArrowFunctionExpression"
+        ) {
+          const constName = `${componentName[0]?.toLowerCase()}${componentName.slice(
+            1
+          )}DefaultProp${
+            property.key.name[0]?.toUpperCase() + property.key.name.slice(1)
+          }`;
+          const constNamePath = root
+            .find(j.Identifier, {
+              name: constName,
+            })
+            .paths();
+          if (constNamePath.length) {
             return defaultPropsMap.set(property.key.name, property.value);
           }
           defaultPropsConstants.push(
             j.variableDeclaration("const", [
-              j.variableDeclarator(j.identifier(constName), property.value)
+              j.variableDeclarator(j.identifier(constName), property.value),
             ])
           );
           defaultPropsMap.set(property.key.name, j.identifier(constName));
@@ -131,8 +141,8 @@ export default function transform(
       });
     }
 
-    if(defaultPropsConstants.length && path.parent) {
-      for(let defaultPropsConstant of defaultPropsConstants) {
+    if (defaultPropsConstants.length && path.parent) {
+      for (let defaultPropsConstant of defaultPropsConstants) {
         path.parent.parent.insertBefore(defaultPropsConstant);
       }
     }

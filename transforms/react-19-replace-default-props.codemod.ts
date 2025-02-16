@@ -70,6 +70,16 @@ export default function transform(
       return;
     }
 
+    const componentFunction = j.functionDeclaration(
+      j.identifier(componentName),
+      path.value.params,
+      path.value.body
+    );
+
+    if (componentFunction === null) {
+      return;
+    }
+
     const defaultProps = getComponentStaticPropValue(
       j,
       root,
@@ -139,6 +149,36 @@ export default function transform(
           }
         }
       });
+    } else if (j.Identifier.check(propsArg)) {
+      const propsArgName = propsArg.name;
+      componentFunction.body.body.unshift(
+        j.expressionStatement(
+          j.assignmentExpression(
+            "=",
+            j.identifier(propsArgName),
+            j.objectExpression([
+              j.spreadElement(j.identifier(propsArgName)),
+              ...Array.from(defaultPropsMap.entries()).map(([key, value]) =>
+                j.objectProperty(
+                  j.identifier(key),
+                  j.conditionalExpression(
+                    j.binaryExpression(
+                      "===",
+                      j.unaryExpression(
+                        "typeof",
+                        j.identifier(`${propsArgName}.${key}`)
+                      ),
+                      j.literal("undefined")
+                    ),
+                    value,
+                    j.identifier(`${propsArgName}.${key}`)
+                  )
+                )
+              ),
+            ])
+          )
+        )
+      );
     }
 
     if (defaultPropsConstants.length && path.parent) {

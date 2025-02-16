@@ -8,6 +8,7 @@ import type {
   ObjectProperty,
   Property,
   VariableDeclaration,
+  RestElement,
 } from "jscodeshift";
 
 import {
@@ -132,6 +133,8 @@ export default function transform(
     });
 
     const propsArg = path.value.params.at(0);
+    let inlineDefaultProps: { key: string; value: any }[] = [];
+    let propsArgName: string | undefined;
 
     if (j.ObjectPattern.check(propsArg)) {
       propsArg.properties.forEach((property) => {
@@ -146,11 +149,26 @@ export default function transform(
               property,
               defaultPropsMap.get(property.key.name)
             );
+            defaultPropsMap.delete(property.key.name);
+          }
+        } else if (j.RestElement.check(property)) {
+          const restElement = property as RestElement;
+          if (j.Identifier.check(restElement.argument)) {
+            propsArgName = restElement.argument.name;
+            inlineDefaultProps = Array.from(defaultPropsMap.entries()).map(
+              ([key, value]) => ({ key, value })
+            );
           }
         }
       });
     } else if (j.Identifier.check(propsArg)) {
-      const propsArgName = propsArg.name;
+      propsArgName = propsArg.name;
+      inlineDefaultProps = Array.from(defaultPropsMap.entries()).map(
+        ([key, value]) => ({ key, value })
+      );
+    }
+
+    if (propsArgName && inlineDefaultProps.length) {
       componentFunction.body.body.unshift(
         j.expressionStatement(
           j.assignmentExpression(
@@ -158,7 +176,7 @@ export default function transform(
             j.identifier(propsArgName),
             j.objectExpression([
               j.spreadElement(j.identifier(propsArgName)),
-              ...Array.from(defaultPropsMap.entries()).map(([key, value]) =>
+              ...inlineDefaultProps.map(({ key, value }) =>
                 j.objectProperty(
                   j.identifier(key),
                   j.conditionalExpression(

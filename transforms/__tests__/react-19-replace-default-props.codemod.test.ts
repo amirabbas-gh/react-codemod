@@ -286,4 +286,36 @@ describe("react/19/replace-default-props", () => {
       OUTPUT.replace(/W/gm, "")
     );
   });
+
+  it("rest element example", async () => {
+    const INPUT = await readFile(
+      join(
+        __dirname,
+        "..",
+        "__testfixtures__/react-19-replace-default-props/rest-element-example.input.jsx"
+      ),
+      "utf-8"
+    );
+    const OUTPUT = await readFile(
+      join(
+        __dirname,
+        "..",
+        "__testfixtures__/react-19-replace-default-props/rest-element-example.output.jsx"
+      ),
+      "utf-8"
+    );
+
+    const actualOutput = transform(
+      {
+        path: "index.js",
+        source: INPUT,
+      },
+      buildApi("jsx")
+    );
+
+    assert.deepEqual(
+      actualOutput?.replace(/W/gm, ""),
+      OUTPUT.replace(/W/gm, "")
+    );
+  });
 });

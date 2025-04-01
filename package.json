@@ -41,6 +41,9 @@
     "transformIgnorePatterns": [
       "/node_modules/(?!@codemod\\.com/codemod-utils)/.+\\.js$"
     ],
+    "moduleNameMapper": {
+      "^@codemod\\.com/codemod-utils$": "<rootDir>/node_modules/@codemod.com/codemod-utils/dist/index.cjs"
+    },
     "moduleFileExtensions": ["js", "ts", "tsx", "jsx"],
     "extensionsToTreatAsEsm": [".ts", ".tsx", ".js", ".jsx"]
   },

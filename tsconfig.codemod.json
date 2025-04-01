@@ -2,7 +2,7 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "composite": true,
-    "moduleResolution": "node",
+    "moduleResolution": "NodeNext",
     "module": "NodeNext",
     "target": "ES2015",
     "lib": ["ESNext", "DOM"],
